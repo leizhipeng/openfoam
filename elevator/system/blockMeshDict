@@ -1,0 +1,242 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration    | Version:  v2212                                 |
+|   \\  /    A nd          | Website:  www.openfoam.com                      |
+|    \\/     M anipulation |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      blockMeshDict;
+}
+
+// ************ Global Settings ************
+scale 1;
+
+// Define macros for geometry parameters
+X0 0;
+X1 0.25;
+X2 1.75;
+X3 2;
+Y0 0;
+Y1 1.0;
+Y2 3.4;
+Y3 14.0;
+Z0 0;
+Z1 0.1;
+
+// Define number of cells in each direction
+NX 10;
+NY 30;
+NZ 1 ;
+
+// ************ Geometry ************
+vertices
+(
+    ($X0 $Y0 $Z0)           // 0
+    ($X1 $Y0 $Z0)       // 1
+    ($X2 $Y0 $Z0)       // 2
+    ($X3 $Y0 $Z0)           // 3
+
+    // Middle Row1 of Vertices
+    ($X0 $Y1 $Z0)       // 4
+    ($X1 $Y1 $Z0)   // 5
+    ($X2 $Y1 $Z0)   // 6
+    ($X3 $Y1 $Z0)       // 7
+
+    // Middle Row2 of Vertices
+    ($X0 $Y2 $Z0)       // 8
+    ($X1 $Y2 $Z0)   // 9
+    ($X2 $Y2 $Z0)   // 10
+    ($X3 $Y2 $Z0)       // 11
+
+    // Top Row of Vertices
+    ($X0 $Y3 $Z0)       // 12
+    ($X1 $Y3 $Z0)   // 13
+    ($X2 $Y3 $Z0)   // 14
+    ($X3 $Y3 $Z0)       // 15
+
+    // Upper Layer of Vertices
+    ($X0 $Y0 $Z1)           // 16
+    ($X1 $Y0 $Z1)       // 17
+    ($X2 $Y0 $Z1)       // 18
+    ($X3 $Y0 $Z1)           // 19
+
+    ($X0 $Y1 $Z1)       // 20
+    ($X1 $Y1 $Z1)   // 21
+    ($X2 $Y1 $Z1)   // 22
+    ($X3 $Y1 $Z1)       // 23
+
+    ($X0 $Y2 $Z1)       // 24
+    ($X1 $Y2 $Z1)   // 25
+    ($X2 $Y2 $Z1)   // 26
+    ($X3 $Y2 $Z1)       // 27
+
+    ($X0 $Y3 $Z1)       // 28
+    ($X1 $Y3 $Z1)   // 29
+    ($X2 $Y3 $Z1)   // 30
+    ($X3 $Y3 $Z1)       // 31
+);
+
+blocks
+(
+    // Bottom Left Box
+    hex (0 1 5 4 16 17 21 20) ($NX $NY $NZ) simpleGrading (1 1 1)
+
+    // Bottom Center Box
+    hex (1 2 6 5 17 18 22 21) ($NX $NY $NZ) simpleGrading (1 1 1)
+
+    // Bottom Right Box
+    hex (2 3 7 6 18 19 23 22) ($NX $NY $NZ) simpleGrading (1 1 1)
+
+    // Middle Left Box
+    hex (4 5 9 8 20 21 25 24) ($NX $NY $NZ) simpleGrading (1 1 1) 
+
+    // Middle Center Box
+    // hex (5 6 10 9 21 22 26 25) ($NX $NY $NZ) simpleGrading (1 1 1)
+
+    // Middle Right Box
+    hex (6 7 11 10 22 23 27 26) ($NX $NY $NZ) simpleGrading (1 1 1)
+
+    // Top Left Box
+    hex (8 9 13 12 24 25 29 28) ($NX $NY $NZ) simpleGrading (1 1 1)
+
+    // Top Center Box
+    hex (9 10 14 13 25 26 30 29) ($NX $NY $NZ) simpleGrading (1 1 1)
+
+    // Top Right Box
+    hex (10 11 15 14 26 27 31 30) ($NX $NY $NZ) simpleGrading (1 1 1)
+
+);
+
+// ************ Boundary Conditions ************
+boundary
+(
+    // Inlet/Outlet
+    bottom
+    {
+        type wall;
+        faces
+        (
+            // (0 1 17 16)
+            (1 2 18 17)
+            // (2 3 19 18)
+        );
+    }
+
+    inlet
+    {
+        type patch;
+        faces
+        (
+            (0 1 17 16)
+            // (1 2 18 17)
+            (2 3 19 18)
+        );
+
+    }
+
+    outlet
+    {
+        type patch;
+        faces
+        (
+            (12 13 29 28)
+            (13 14 30 29)
+            (14 15 31 30)
+        );
+    }
+
+   
+    // Top/Bottom
+    front
+    {
+        type empty;
+        faces
+        (
+            (0 1 5 4) 
+            (1 2 6 5) 
+            (2 3 7 6) 
+            (4 5 9 8) 
+            // (5 6 10 9) 
+            (6 7 11 10) 
+            (8 9 13 12) 
+            (9 10 14 13) 
+            (10 11 15 14) 
+         );
+    }
+
+   back
+    {
+        type empty;
+        faces
+        (
+            (16 17 21 20) 
+            (17 18 22 21) 
+            (18 19 23 22) 
+            (20 21 25 24)  
+            // (21 22 26 25) 
+            (22 23 27 26) 
+            (24 25 29 28) 
+            (25 26 30 29)
+            (26 27 31 30) 
+        );
+    }
+
+    leftside
+    {
+        type wall;
+        faces
+        (
+            (0 4 20 16)
+            (4 8 24 20)
+            (8 12 28 24)
+        );
+    }
+
+    rightside
+    {
+        type wall;
+        faces
+        (
+            (3 7 23 19)
+            (7 11 27 23)
+            (11 15 31 27)
+        );
+    }
+
+    // Internal Boxes
+    movingWall
+    {
+        type wall;
+        faces
+        (
+            (5 9 25 21)
+            (6 10 26 22)
+            (5 6 22 21)
+            (9 10 26 25)
+        );
+    }
+
+);
+
+// ************ Grading ************
+gradingScheme
+{
+    // Box Grading
+    // box
+    // {
+    //     grade 1.5;
+    //     gradingMethod cellSize;
+    //     cellSize 0.05;
+    //     levels ((1 2) (2 4) (4 8));
+    // }
+}
+
+// ************ Merge Patch Pairs ************
+mergePatchPairs
+(
+);
